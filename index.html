@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>李大夫&孙工的专属小窝 💓</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", 微软雅黑, sans-serif;
+        }
+        body {
+            background-color: #fff5f7; /* 柔和浅粉背景 */
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 900px; /* 稍微加宽以适应两列布局 */
+            gap: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-title {
+            text-align: center;
+            color: #e66465;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        /* 通用板块样式 */
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            width: 100%;
+        }
+        /* 两列布局的行 */
+        .row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+        .row .section {
+            flex: 1; /* 等宽 */
+            min-width: 0; /* 防止flex溢出 */
+        }
+
+        /* -------------- 板块1：方形日历 + 相恋时长 -------------- */
+        .time-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #e66465;
+            padding-left: 20px;
+        }
+        .calendar-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .calendar-square {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #e66465, #ff8a8a);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(230, 100, 101, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .calendar-square:hover {
+            transform: scale(1.05);
+        }
+        .calendar-month {
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .calendar-day {
+            font-size: 42px;
+            font-weight: bold;
+            line-height: 1;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .calendar-week {
+            font-size: 14px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        .calendar-date-text {
+            font-size: 20px;
+            color: #555;
+            font-weight: 500;
+        }
+        .love-time {
+            text-align: right;
+        }
+        .love-time-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .love-time-num {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e66465;
+        }
+
+        /* -------------- 板块2：我爱你打卡 -------------- */
+        .love-check-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .img-box {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            background-color: #fafafa;
+            overflow: hidden;
+        }
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .love-btn {
+            background-color: #e66465;
+            color: #fff;
+        }
+        .love-btn:active {
+            background-color: #d45556;
+        }
+
+        /* 烟花特效 */
+        .star {
+            position: absolute;
+            color: var(--star-color);
+            font-size: 24px;
+            pointer-events: none;
+            animation: starExplode 1.3s ease-out forwards, starTwinkle 0.15s infinite alternate;
+            z-index: 99;
+        }
+        .love-text {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 0 0 12px #ff69b4, 0 0 24px #ff87b8, 0 0 36px #ffa7c8;
+            pointer-events: none;
+            animation: textBloom 1.6s ease-out forwards, textTwinkle 0.2s infinite alternate;
+            left: 50%;
+            top: -80px;
+            transform: translateX(-50%);
+            z-index: 99;
+        }
+        @keyframes starExplode {
+            0% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(0.8); }
+            20% { transform: translate(0, 0) rotate(calc(random() * 360deg)) scale(2.5); opacity: 1; }
+            100% { transform: translate(calc(random() * 500px - 250px), calc(random() * 350px * -1 - 50px)) rotate(calc(random() * 1080deg)) scale(0.2); opacity: 0; }
+        }
+        @keyframes textBloom {
+            0% { opacity: 0; transform: translateX(-50%) scale(0); text-shadow: 0 0 0 #ff69b4; }
+            35% { opacity: 1; transform: translateX(-50%) scale(2); text-shadow: 0 0 18px #ff69b4, 0 0 36px #ff87b8, 0 0 54px #ffa7c8; }
+            70% { opacity: 1; transform: translateX(-50%) scale(1.3); text-shadow: 0 0 12px #ff69b4, 0 0 24px #ff87b8; }
+            100% { opacity: 0; transform: translateX(-50%) scale(0.6); text-shadow: 0 0 0 #ff69b4; }
+        }
+        @keyframes starTwinkle {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        @keyframes textTwinkle {
+            0% { opacity: 0.85; }
+            100% { opacity: 1; }
+        }
+
+        /* -------------- 板块3：打坐打卡 -------------- */
+        .meditate-check-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .meditate-title {
+            color: #e66465;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .meditate-btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        .meditate-yes {
+            background-color: #67c23a;
+            color: #fff;
+        }
+        .meditate-yes:active {
+            background-color: #5eba2f;
+        }
+        .meditate-no {
+            background-color: #f56c6c;
+            color: #fff;
+        }
+        .meditate-no:active {
+            background-color: #f35858;
+        }
+        .counter {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e66465;
+            margin-top: 5px;
+        }
+
+        /* -------------- 板块4：相册 -------------- */
+        .photo-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .photo-item {
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .photo-item img:hover {
+            transform: scale(1.1);
+        }
+
+        /* -------------- 板块5：录音 -------------- */
+        .audio-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .audio-list {
+            list-style: none;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .audio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .audio-name {
+            flex: 1;
+            font-size: 14px;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .audio-item audio {
+            width: 140px;
+            height: 40px;
+        }
+
+        /* 底部彩蛋 */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题 -->
+        <h1 class="page-title">李大夫 & 孙工 的专属小窝 💓</h1>
+
+        <!-- 第一行：日期 + 相恋时长 -->
+        <div class="section time-section">
+            <div class="calendar-box">
+                <div class="calendar-square" id="calendarSquare">
+                    <div class="calendar-month" id="calendarMonth">五月</div>
+                    <div class="calendar-day" id="calendarDay">20</div>
+                    <div class="calendar-week" id="calendarWeek">周二</div>
+                </div>
+                <div class="calendar-date-text" id="fullDate"></div>
+            </div>
+            <div class="love-time">
+                <div class="love-time-text">我们在一起啦</div>
+                <div class="love-time-num" id="loveDays"></div>
+            </div>
+        </div>
+
+        <!-- 第二行：我爱你打卡 + 打坐打卡 -->
+        <div class="row">
+            <!-- 我爱你打卡 -->
+            <div class="section love-check-section">
+                <div class="img-box">
+                    <img src="nahan.png" alt="告白插图">
+                </div>
+                <button class="btn love-btn" id="loveBtn">今天说我爱你了嘛 ✨</button>
+            </div>
+
+            <!-- 打坐打卡 -->
+            <div class="section meditate-check-section">
+                <div class="meditate-title">今天打坐了吗 🧘</div>
+                <div class="img-box">
+                    <img src="dazuo2.png" alt="打坐状态图" id="meditateImg">
+                </div>
+                <div class="meditate-btn-group">
+                    <button class="btn meditate-yes" id="meditateYes">打坐了 ✔️</button>
+                    <button class="btn meditate-no" id="meditateNo">没有打坐 ❌</button>
+                </div>
+                <div class="counter">累计打坐：<span id="meditateCount">0</span> 次</div>
+            </div>
+        </div>
+
+        <!-- 第三行：相册 + 录音 -->
+        <div class="row">
+            <!-- 相册模块 -->
+            <div class="section photo-section">
+                <h3 class="meditate-title">📸 我们的相册</h3>
+                <div class="photo-grid" id="photoGrid">
+                    <!-- JS动态生成照片 -->
+                </div>
+            </div>
+
+            <!-- 录音模块 -->
+            <div class="section audio-section">
+                <h3 class="meditate-title">🎵 我们的录音</h3>
+                <ul class="audio-list" id="audioList">
+                    <!-- JS动态生成录音列表 -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- 底部彩蛋 -->
+        <div class="footer">愿我们岁岁年年，朝朝暮暮 💌</div>
+    </div>
+
+    <script>
+        // ==================== 配置区：请根据实际文件修改 ====================
+        // 照片文件名列表（放在 images/ 文件夹下）
+        const photoFiles = [
+            'photo1.jpg',
+            'photo2.jpg',
+            'photo3.jpg',
+            'photo4.jpg',
+            'photo5.jpg',
+            'photo6.jpg'
+            // 继续添加更多照片...
+        ];
+
+        // 录音文件名列表（放在 audio/ 文件夹下）
+        const audioFiles = [
+            'audio1.mp3',
+            'audio2.mp3',
+            'audio3.mp3'
+            // 继续添加更多录音...
+        ];
+        // ==================== 配置结束 ====================
+
+        // ---------- 板块1：日期 + 相恋时长 ----------
+        const loveStart = new Date(2025, 4, 14); // 2025年5月14日
+        const calendarMonth = document.getElementById('calendarMonth');
+        const calendarDay = document.getElementById('calendarDay');
+        const calendarWeek = document.getElementById('calendarWeek');
+        const fullDateEl = document.getElementById('fullDate');
+        const loveDaysEl = document.getElementById('loveDays');
+
+        function updateCalendar() {
+            const now = new Date();
+            const monthArr = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+            const month = monthArr[now.getMonth()];
+            const day = now.getDate();
+            const weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            const week = weekArr[now.getDay()];
+            calendarMonth.innerText = month;
+            calendarDay.innerText = day;
+            calendarWeek.innerText = week;
+            const year = now.getFullYear();
+            const monthNum = String(now.getMonth() + 1).padStart(2, '0');
+            const dayNum = String(day).padStart(2, '0');
+            fullDateEl.innerText = `${year}年${monthNum}月${dayNum}日`;
+        }
+
+        function calculateLoveDays() {
+            const now = new Date();
+            const diffTime = now - loveStart;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return `${diffDays} 天`;
+        }
+
+        function initTimeSection() {
+            updateCalendar();
+            loveDaysEl.innerText = calculateLoveDays();
+            setInterval(() => {
+                loveDaysEl.innerText = calculateLoveDays();
+            }, 1000);
+            // 每分钟检查一次日历（跨天更新）
+            setInterval(() => {
+                updateCalendar();
+            }, 60000);
+        }
+
+        // ---------- 板块2：我爱你打卡 (烟花) ----------
+        const loveBtn = document.getElementById('loveBtn');
+        const starChars = ['★', '✨', '💫', '⭐', '💖', '💎', '✦', '✧', '❀'];
+        const starColors = ['#ffd700', '#ff69b4', '#ffffff', '#6495ED', '#ff99cc', '#fffacd', '#9370db'];
+
+        loveBtn.addEventListener('click', () => {
+            for (let i = 0; i < 25; i++) {
+                createStar(loveBtn);
+            }
+            setTimeout(() => {
+                createLoveText(loveBtn);
+            }, 200);
+        });
+
+        function createStar(btn) {
+            const star = document.createElement('span');
+            star.innerText = starChars[Math.floor(Math.random() * starChars.length)];
+            star.className = 'star';
+            star.style.setProperty('--star-color', starColors[Math.floor(Math.random() * starColors.length)]);
+            star.style.left = `50%`;
+            star.style.top = `50%`;
+            star.style.transform = `translate(-50%, -50%)`;
+            btn.appendChild(star);
+            setTimeout(() => star.remove(), 1300);
+        }
+
+        function createLoveText(btn) {
+            const text = document.createElement('span');
+            text.innerText = '我爱你';
+            text.className = 'love-text';
+            btn.appendChild(text);
+            setTimeout(() => text.remove(), 1600);
+        }
+
+        // ---------- 板块3：打坐打卡 ----------
+        const meditateYes = document.getElementById('meditateYes');
+        const meditateNo = document.getElementById('meditateNo');
+        const meditateCountEl = document.getElementById('meditateCount');
+        const meditateImg = document.getElementById('meditateImg');
+        let count = localStorage.getItem('meditateCount') ? Number(localStorage.getItem('meditateCount')) : 0;
+        meditateCountEl.innerText = count;
+
+        meditateYes.addEventListener('click', () => {
+            count++;
+            meditateCountEl.innerText = count;
+            localStorage.setItem('meditateCount', count);
+            meditateImg.src = 'dazuo1.png';
+            setTimeout(() => {
+                meditateImg.src = 'dazuo2.png';
+            }, 500);
+        });
+
+        meditateNo.addEventListener('click', () => {
+            if (count > 0) {
+                count--;
+                meditateCountEl.innerText = count;
+                localStorage.setItem('meditateCount', count);
+                alert('没关系 😊 明天继续加油～');
+            } else {
+                alert('计数已经是0啦 🚫 不能再减咯～');
+            }
+        });
+
+        // ---------- 板块4：相册 ----------
+        const photoGrid = document.getElementById('photoGrid');
+        function renderPhotos() {
+            photoGrid.innerHTML = ''; // 清空
+            photoFiles.forEach(filename => {
+                const item = document.createElement('div');
+                item.className = 'photo-item';
+                const img = document.createElement('img');
+                img.src = `images/${filename}`;
+                img.alt = filename;
+                img.onerror = () => { img.style.display = 'none'; }; // 图片加载失败隐藏（可选）
+                item.appendChild(img);
+                photoGrid.appendChild(item);
+            });
+        }
+
+        // ---------- 板块5：录音 ----------
+        const audioList = document.getElementById('audioList');
+        function renderAudio() {
+            audioList.innerHTML = '';
+            audioFiles.forEach(filename => {
+                const li = document.createElement('li');
+                li.className = 'audio-item';
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'audio-name';
+                nameSpan.innerText = filename;
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                audio.src = `audio/${filename}`;
+                audio.preload = 'none'; // 不预加载
+                li.appendChild(nameSpan);
+                li.appendChild(audio);
+                audioList.appendChild(li);
+            });
+        }
+
+        // 初始化所有
+        window.onload = function() {
+            initTimeSection();
+            renderPhotos();
+            renderAudio();
+        };
+    </script>
+</body>
+</html>
